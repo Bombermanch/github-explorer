@@ -10,29 +10,24 @@ export const SearchBar = () => {
     setError,
     searchQuery,
     setSearchQuery,
-    currentPage,
-    pageInfo,
     setPageInfo,
-    cursors,
     setCursor
   } = useRepositoryStore()
   const [value, setValue] = useState(searchQuery)
 
-  const handleSearch = async (query: string, page: number) => {
+  const handleSearch = async (query: string) => {
     try {
       setLoading(true)
       setError(null)
 
-      const cursor = page === 1 ? undefined : cursors[page - 1]
-
-      const data = await searchRepositories(query, page, cursor)
+      const data = await searchRepositories(query, 1, null)
 
       setRepositories(data.search.edges.map(edge => edge.node))
       setTotalCount(Math.min(data.search.repositoryCount, 100))
       setPageInfo(data.search.pageInfo)
-
+      
       if (data.search.pageInfo.endCursor) {
-        setCursor(page, data.search.pageInfo.endCursor)
+        setCursor(1, data.search.pageInfo.endCursor)
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Произошла ошибка при поиске')
@@ -44,11 +39,11 @@ export const SearchBar = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(value)
-      handleSearch(value, currentPage)
+      handleSearch(value)
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [value, currentPage])
+  }, [value])
 
   return (
     <div className="search-bar">

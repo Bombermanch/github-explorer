@@ -54,7 +54,12 @@ export const useRepositoryStore = create<RepositoryStore>((set) => ({
     window.history.pushState({}, '', `?${params.toString()}`)
   },
   setSearchQuery: (query) => {
-    set({ searchQuery: query, currentPage: 1, cursors: {} })
+    set({ 
+      searchQuery: query, 
+      currentPage: 1, 
+      cursors: {}, 
+      pageInfo: null 
+    })
     const params = new URLSearchParams(window.location.search)
     params.set('query', query)
     params.set('page', '1')
